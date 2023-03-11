@@ -1,5 +1,8 @@
-﻿    namespace WSAustral.Modelos
+﻿using Dapper.Contrib.Extensions;
+
+namespace WSAustral.Modelos
 {
+    [Table("Almacen.LogRCNP")]
     public class LogRCNP
     {
         public string USUARIO { get; set; }

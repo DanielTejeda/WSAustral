@@ -1,8 +1,16 @@
+using WSAustral.UnitOfWork;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IUnitOfWork, WSUnitOfWork>();
+builder.Services.AddSingleton(_ => builder.Build());
+
+/*string strconnection = builder.Configuration.GetConnectionString("ConnectionStrings:ServidorAlmacenes");
+builder.Services.Add*/
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

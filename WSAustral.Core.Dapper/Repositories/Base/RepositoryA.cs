@@ -1,11 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using WSAustral.Core.Repositories.Base;
+using WSAustral.Modelos;
 
 namespace WSAustral.Core.Dapper.Repositories.Base
 {
@@ -20,11 +21,11 @@ namespace WSAustral.Core.Dapper.Repositories.Base
             _connectionString = connectionString;
         }
 
-        public async Task<int> Agregar(T entidad)
+        public long Agregar(T entidad)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                return await connection.InsertAsync<T>(entidad);
+                return connection.Insert<T>(entidad);
             }
         }
         public async Task<T> Obtener(int id)

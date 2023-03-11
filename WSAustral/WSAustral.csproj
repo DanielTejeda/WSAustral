@@ -11,4 +11,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WSAustral.Core.Dapper\WSAustral.Core.Dapper.csproj" />
+    <ProjectReference Include="..\WSAustral.Core\WSAustral.Core.csproj" />
+    <ProjectReference Include="..\WSAustral.Modelos\WSAustral.Modelos.csproj" />
+    <ProjectReference Include="..\WSAustral.UnitOfWork\WSAustral.UnitOfWork.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace WSAustral.UnitOfWork
 {
     public interface IUnitOfWork
     {
-        IRepositoryRCNP ReportesCNP { get; } 
+        IConfiguration _configuration { get; }
+        IRepositoryRCNP ReportesCNP { get; set; } 
     }
 }

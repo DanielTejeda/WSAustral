@@ -10,6 +10,6 @@ namespace WSAustral.Core.Repositories
 {
     public interface IRepositoryRCNP : IRepositoryA<LogRCNP>
     {
-
+        Task<string> BuscarPEP(string pep);
     }
 }
