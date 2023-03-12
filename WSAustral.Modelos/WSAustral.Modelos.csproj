@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     <PackageReference Include="Dapper.Contrib.Extensions.Tablename" Version="1.1.1" />
   </ItemGroup>
 
