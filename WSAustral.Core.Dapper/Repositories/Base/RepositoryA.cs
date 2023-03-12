@@ -17,40 +17,52 @@ namespace WSAustral.Core.Dapper.Repositories.Base
 
         public RepositoryA(string connectionString)
         {
-            SqlMapperExtensions.TableNameMapper = (type) => { return $"{type.Name}"; }; //Configuración para activar el mapeo de Dapper
+            SqlMapperExtensions.TableNameMapper = type => {
+                if (type == typeof(T))
+                {
+                    return "Almacen." + $"{type.Name}";
+                }
+                return $"{type.Name}";
+            }; //Configuración para activar el mapeo de Dapper
 
             _connectionString = connectionString;
         }
 
-        public void Agregar(T entidad)
+        public async Task<int> Agregar(T entidad)
         {
-            var connection = new SqlConnection(_connectionString);
-            connection.Insert<T>(entidad);
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                return await connection.InsertAsync<T>(entidad);
+            }
         }
 
-        public T Obtener(int id)
+        public async Task<T> Obtener(int id)
         {
-            var connection = new SqlConnection(_connectionString);
-            return connection.Get<T>(id);
-            
+            using (var connection = new SqlConnection(_connectionString)) {
+                return await connection.GetAsync<T>(id);
+            }
         }
-        public IEnumerable<T> Listar()
+        public async Task<IEnumerable<T>> Listar()
         {
-            var connection = new SqlConnection(_connectionString);
-            return connection.GetAll<T>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                return await connection.GetAllAsync<T>();
+            }
         }
-        public bool Eliminar(T entidad)
+
+        public async Task<bool> Eliminar(T entidad)
         {
-            var connection = new SqlConnection(_connectionString);
-            
-            return connection.Delete<T>(entidad);
-            
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                return await connection.DeleteAsync<T>(entidad);
+            }
         }
-        public bool Modificar(T entidad)
+        public async Task<bool> Modificar(T entidad)
         {
-            var connection = new SqlConnection(_connectionString);
-            
-            return connection.Update<T>(entidad);
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                return await connection.UpdateAsync<T>(entidad);
+            }
         }
     }
 }

@@ -19,8 +19,9 @@ namespace WSAustral.UnitOfWork
         public WSUnitOfWork(IConfiguration configuration)
         {
             _configuration = configuration;
+
+            ReportesCNP = new RepositoryRCNP(_configuration.GetConnectionString("ServidorAlmacenes"));
             
-            ReportesCNP = new RepositoryRCNP("Server=10.5.0.52;Initial Catalog=Almacenes;Persist Security Info=False;User ID=UsrPortales;Password=$#ewo2001.2d;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
             /*ReportesCNP = new RepositoryRCNP(_configuration["ConnectionStrings:ServidorAlmacenes"]);*/
         }
 

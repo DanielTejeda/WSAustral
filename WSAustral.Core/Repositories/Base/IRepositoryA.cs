@@ -9,10 +9,10 @@ namespace WSAustral.Core.Repositories.Base
 {
     public interface IRepositoryA<T> where T : class
     {
-        void Agregar(T entidad);
-        T Obtener(int id);
-        IEnumerable<T> Listar();
-        bool Eliminar(T entidad);
-        bool Modificar(T entidad);
+        Task<int> Agregar(T entidad);
+        Task<T> Obtener(int id);
+        Task<IEnumerable<T>> Listar();
+        Task<bool> Eliminar(T entidad);
+        Task<bool> Modificar(T entidad);
     }
 }

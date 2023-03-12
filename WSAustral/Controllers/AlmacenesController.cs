@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization.DataContracts;
 using WSAustral.Core.Dapper.Repositories;
 using WSAustral.Modelos;
 using WSAustral.UnitOfWork;
+using Newtonsoft.Json;
 
 namespace WSAustral.Controllers
 {
@@ -20,9 +24,27 @@ namespace WSAustral.Controllers
         }
 
         [HttpPost]
+        [Authorize]
+
         public Respuesta SubirArchivoRCNP([FromBody] RptCargaNoPeligrosa objRptCargaNoPeligrosa)
         {
             Respuesta objRespuesta = new Respuesta();
+            // set usuario
+            var obj = new LogRCNP();
+
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+                obj.USUARIO = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value;
+            }
+            else
+            {
+                obj.USUARIO = "";
+            }
+
+            // set fecha
+            obj.FEC_REGIS = DateTime.Now;
 
             try
             {
@@ -48,9 +70,19 @@ namespace WSAustral.Controllers
             }
             catch (Exception e)
             {
-                objRespuesta.C_STATUS = "2991";
+                objRespuesta.C_STATUS = "299";
                 objRespuesta.C_MESSAGE = "Interrupción por error: " + e.Message;
             }
+            // set json request =  serializar RptCargaNoPeligrosa
+            var jsonRequest = JsonConvert.SerializeObject(objRptCargaNoPeligrosa);
+            obj.JSON_Request = jsonRequest;
+
+            // set json response
+            var jsonResponse = JsonConvert.SerializeObject(objRespuesta);
+            obj.JSON_Response = jsonResponse;
+
+            // insert
+            _unitOfWork.ReportesCNP.Agregar(obj);
 
             return objRespuesta;
         }
@@ -80,15 +112,6 @@ namespace WSAustral.Controllers
                         objRespuesta.C_MESSAGE = "Finalizado sin errores. PDF actualizado.";
                     }
 
-                    var obje = new LogRCNP();
-                    obje.USUARIO = "SGS";
-                    obje.TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-                    obje.JSON_Request = "{ \"C_PEPNO\" : \"6110002978\", \"C_FILE64\" : \"SADASDASD \" }";
-                    obje.JSON_Response = "{ \"c_STATUS\" : \"102\", \"c_MESSAGE\" : \"Finalizado sin errores. PDF actualizado.\" }";
-                    obje.FEC_REGIS = DateTime.Now;
-
-                    _unitOfWork.ReportesCNP.Agregar(obje);
-
                     var dataByteArray = Convert.FromBase64String(archivo);
                     System.IO.File.WriteAllBytes(path_escribir, dataByteArray);
                 }
@@ -100,7 +123,7 @@ namespace WSAustral.Controllers
             }
             catch (Exception e)
             {
-                objRespuesta.C_STATUS = "2992";
+                objRespuesta.C_STATUS = "299";
                 objRespuesta.C_MESSAGE = "Interrupción por error: " + e.Message;
             }
 
