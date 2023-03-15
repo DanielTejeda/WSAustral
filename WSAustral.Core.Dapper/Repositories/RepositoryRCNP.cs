@@ -11,7 +11,7 @@ using WSAustral.Modelos;
 
 namespace WSAustral.Core.Dapper.Repositories
 {
-    public class RepositoryRCNP : RepositoryA<LogRCNP>, IRepositoryRCNP
+    public class RepositoryRCNP : RepositoryA<TBL_LogWS>, IRepositoryRCNP
     {
         public RepositoryRCNP(string connectionString) : base(connectionString)
         {

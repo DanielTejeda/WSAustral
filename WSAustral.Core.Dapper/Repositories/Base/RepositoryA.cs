@@ -20,7 +20,7 @@ namespace WSAustral.Core.Dapper.Repositories.Base
             SqlMapperExtensions.TableNameMapper = type => {
                 if (type == typeof(T))
                 {
-                    return "Almacen." + $"{type.Name}";
+                    return "SEGURIDAD." + $"{type.Name}";
                 }
                 return $"{type.Name}";
             }; //Configuración para activar el mapeo de Dapper

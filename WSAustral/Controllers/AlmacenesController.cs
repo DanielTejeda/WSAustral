@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization.DataContracts;
@@ -7,6 +8,7 @@ using WSAustral.Core.Dapper.Repositories;
 using WSAustral.Modelos;
 using WSAustral.UnitOfWork;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace WSAustral.Controllers
 {
@@ -30,7 +32,7 @@ namespace WSAustral.Controllers
         {
             Respuesta objRespuesta = new Respuesta();
             // set usuario
-            var obj = new LogRCNP();
+            var obj = new TBL_LogWS();
 
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             if (identity != null)
@@ -52,21 +54,22 @@ namespace WSAustral.Controllers
                 {
                     objRespuesta.C_STATUS = "202";
                     objRespuesta.C_MESSAGE = "Interrupción por error. Parámetros de entrada faltantes.";
-                    return objRespuesta;
+                    //return objRespuesta;
                 }
-                if (_unitOfWork.ReportesCNP.BuscarPEP(objRptCargaNoPeligrosa.C_PEPNO).Result == "NO EXISTE")
+                else if (_unitOfWork.ReportesCNP.BuscarPEP(objRptCargaNoPeligrosa.C_PEPNO).Result == "NO EXISTE")
                 {
                     objRespuesta.C_STATUS = "203";
                     objRespuesta.C_MESSAGE = "Interrupción por error. El número de PEP no existe";
-                    return objRespuesta;
+                    //return objRespuesta;
+                } else
+                {
+                    string path_RCNP = _unitOfWork._configuration["Configuraciones:Settings:RutaWebRCNP"];
+                    string sufijo = objRptCargaNoPeligrosa.C_PEPNO + "_RCNP.pdf";
+
+                    string path_escribir = path_RCNP + sufijo;
+
+                    objRespuesta = SubirArchivo(objRptCargaNoPeligrosa.C_FILE64, path_escribir);
                 }
-
-                string path_RCNP = _unitOfWork._configuration["Configuraciones:Settings:RutaWebRCNP"];
-                string sufijo = objRptCargaNoPeligrosa.C_PEPNO + "_RCNP.pdf";
-
-                string path_escribir = path_RCNP + sufijo;
-
-                objRespuesta = SubirArchivo(objRptCargaNoPeligrosa.C_FILE64, path_escribir);
             }
             catch (Exception e)
             {
@@ -81,6 +84,9 @@ namespace WSAustral.Controllers
             var jsonResponse = JsonConvert.SerializeObject(objRespuesta);
             obj.JSON_Response = jsonResponse;
 
+            // set endpoint
+            obj.END_POINT = HttpContext.Request.GetDisplayUrl();
+            
             // insert
             _unitOfWork.ReportesCNP.Agregar(obj);
 

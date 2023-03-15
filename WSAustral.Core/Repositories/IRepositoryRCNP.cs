@@ -8,7 +8,7 @@ using WSAustral.Modelos;
 
 namespace WSAustral.Core.Repositories
 {
-    public interface IRepositoryRCNP : IRepositoryA<LogRCNP>
+    public interface IRepositoryRCNP : IRepositoryA<TBL_LogWS>
     {
         Task<string> BuscarPEP(string pep);
     }
