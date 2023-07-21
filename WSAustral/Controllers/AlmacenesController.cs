@@ -17,15 +17,13 @@ namespace WSAustral.Controllers
     public class AlmacenesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-/*        private readonly RepositoryRCNP repositoryRCNP;*/
-
+        
         public AlmacenesController(IUnitOfWork unitOfWork)
         {
-            //repositoryRCNP = new RepositoryRCNP("Server=10.5.0.52;Initial Catalog=Almacenes;Persist Security Info=False;User ID=UsrPortales;Password=$#ewo2001.2d;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
             _unitOfWork = unitOfWork;
         }
 
-        [HttpPost]
+        [HttpPost("SubirArchivoRCNP")]
         [Authorize]
 
         public Respuesta SubirArchivoRCNP([FromBody] RptCargaNoPeligrosa objRptCargaNoPeligrosa)
@@ -61,7 +59,8 @@ namespace WSAustral.Controllers
                     objRespuesta.C_STATUS = "203";
                     objRespuesta.C_MESSAGE = "Interrupción por error. El número de PEP no existe";
                     //return objRespuesta;
-                } else
+                }
+                else
                 {
                     string path_RCNP = _unitOfWork._configuration["Configuraciones:Settings:RutaWebRCNP"];
                     string sufijo = objRptCargaNoPeligrosa.C_PEPNO + "_RCNP.pdf";
@@ -76,11 +75,12 @@ namespace WSAustral.Controllers
                 objRespuesta.C_STATUS = "299";
                 objRespuesta.C_MESSAGE = "Interrupción por error: " + e.Message;
             }
+
             // set json request =  serializar RptCargaNoPeligrosa
             var jsonRequest = JsonConvert.SerializeObject(objRptCargaNoPeligrosa);
             obj.JSON_Request = jsonRequest;
 
-            // set json response
+            // set json response = serializar Respuesta
             var jsonResponse = JsonConvert.SerializeObject(objRespuesta);
             obj.JSON_Response = jsonResponse;
 

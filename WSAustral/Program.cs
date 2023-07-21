@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WSAustral.Services;
 using WSAustral.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<IUnitOfWork, WSUnitOfWork>();
 builder.Services.AddSingleton(_ => builder.Build());
+
+/* Hosted Service for concurrent tasks */
+builder.Services.AddHostedService<TimedHostedService>();
 
 /*string strconnection = builder.Configuration.GetConnectionString("ConnectionStrings:ServidorAlmacenes");
 builder.Services.Add*/
